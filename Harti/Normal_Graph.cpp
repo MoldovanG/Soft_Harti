@@ -104,5 +104,9 @@ int Normal_Graph::Distance(int A, int B)
 
 	}
 
-	return distance[B];
+	int return_value = distance[B];
+	delete[]distance;
+	delete[]viz;
+
+	return return_value;
 }

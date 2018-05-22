@@ -18,7 +18,7 @@ void DAG_Graph::Read_Graph(istream & in)
 {
 	int noduri = 0;
 	in >> n >> m;
-	lista_noduri = new Node[n + 1];
+	lista_noduri = new Node[n + 2];
 	for (int i = 1; i <= m; i++)
 	{
 		int x1, x2, y1, y2, dist;
@@ -95,17 +95,37 @@ void DAG_Graph::DFS(int x, int *viz)
 		if (viz[aux.first] == 0) DFS(aux.first, viz);
 		lista_noduri[x].Urmatorul_Vecin();
 	}
-	sortare_topologica.push_back(x);
+	if (x!=n+1) sortare_topologica.push_back(x);
 }
 
 
 void DAG_Graph::Sortare_Topologica()
 {
-	int *viz = new int[n + 1];
+	int *viz = new int[n + 2];
 	sortare_topologica.clear();
+
 	for (int i = 1; i <= n; i++)
 		viz[i] = 0;
-	DFS(1,viz);
+
+	int grad_interior[Nmax+1] = { 0 };
+
+	for (int i = 1; i <= n; i++)
+	{
+		int dim = lista_noduri[i].Numar_Vecini();
+		lista_noduri[i].Incepere_Parcurgere();
+		for (int j = 1; j <= dim; j++)
+		{
+			pair<int, int >aux = lista_noduri[i].Vecinul_Curent();
+			grad_interior[aux.first]++;
+		}
+	}
+
+	for (int i=1;i<= n;i++)
+		if (grad_interior[i] == 0)
+		{
+			lista_noduri[n+1].Adauga_Vecin(i, 0);
+		}
+	DFS(n+1,viz);
 	std::reverse(sortare_topologica.begin(), sortare_topologica.end());
 	delete[]viz;
 }
